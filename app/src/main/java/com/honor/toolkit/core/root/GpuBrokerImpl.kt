@@ -47,6 +47,12 @@ class GpuBrokerImpl : IGpuBroker.Stub() {
         return nativeRequestSuSession(cmd)
     }
 
+    override fun getBrokerUid(): Int {
+        return nativeGetUid()
+    }
+
+    private external fun nativeGetUid(): Int
+
     private external fun nativeRequestSuSession(cmd: String): String
     private external fun nativeExecuteIoctl(cmd: Int, payload: ByteArray?): Int
     private external fun nativeGetBrokerLog(): String

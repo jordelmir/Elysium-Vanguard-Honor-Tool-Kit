@@ -25,6 +25,10 @@ class GpuBrokerService : IGpuBroker.Stub() {
         return impl.getContextInfo()
     }
 
+    override fun getBrokerUid(): Int {
+        return impl.getBrokerUid()
+    }
+
     override fun getBrokerLog(): String {
         return impl.getBrokerLog()
     }

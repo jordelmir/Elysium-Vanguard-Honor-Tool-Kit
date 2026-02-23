@@ -53,6 +53,11 @@ interface IGpuBroker {
     long getEsmLeak();
 
     /**
+     * Gets the current UID of the broker process.
+     */
+    int getBrokerUid();
+
+    /**
      * Executes a command as root once escalation is complete.
      */
     String requestSuSession(String cmd);

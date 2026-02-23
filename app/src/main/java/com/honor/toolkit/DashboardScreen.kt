@@ -49,6 +49,7 @@ fun DashboardScreen() {
         } catch (_: Exception) { emptyMap() }
     }
     val shellMode = com.honor.toolkit.core.shizuku.ShellExecutor.isShizukuAvailable()
+    val brokerConnected by com.honor.toolkit.core.root.RootExploitBridge.brokerConnected.collectAsState()
 
     // ── Operation States ──
     var telemetryResult by remember { mutableStateOf<String?>(null) }
@@ -231,6 +232,11 @@ fun DashboardScreen() {
                     if (shellMode) "SHIZUKU (ELEVATED)" else "RUNTIME (STANDARD)",
                     if (shellMode) MatrixGreen else WarningOrange
                 )
+                MetricRow(
+                    "SOVEREIGN GUARD",
+                    if (brokerConnected) "✓ CONNECTED" else "⏳ BINDING...",
+                    if (brokerConnected) MatrixGreen else WarningOrange
+                )
                 Spacer(modifier = Modifier.height(10.dp))
                 // Animated gradient bar
                 Box(
@@ -368,7 +374,7 @@ fun DashboardScreen() {
                             ),
                             RoundedCornerShape(12.dp)
                         )
-                        .clickable(enabled = !rootTriggered || rootProgress >= 1f) {
+                        .clickable(enabled = (!rootTriggered || rootProgress >= 1f) && brokerConnected) {
                             if (!rootTriggered) {
                                 rootTriggered = true
                                 coroutineScope.launch {
@@ -431,21 +437,21 @@ fun DashboardScreen() {
                                         }
                                     } catch (_: Exception) {}
 
-                                    // Verify strictly via Stage 7 (SYSTEM_ACCESS) completion
-                                    val finalStage = try { com.honor.toolkit.core.root.RootExploitBridge.nativeGetStage() } catch (_: Exception) { 0 }
+                                    // Verify strictly via Stage 7 (SYSTEM_ACCESS) completion in the BROKER context
+                                    val finalStage = com.honor.toolkit.core.root.RootExploitBridge.getStage()
                                     val uidCheck = com.honor.toolkit.features.lab.KernelPolicyLab.getProcessContext()
-                                    val uid = try { com.honor.toolkit.core.root.RootExploitBridge.nativeGetUid() } catch (_: Exception) { -1 }
+                                    val brokerUid = com.honor.toolkit.core.root.RootExploitBridge.getUid()
 
-                                    if (exploitResult && finalStage == 7 && uid == 0) {
+                                    if (exploitResult && finalStage == 7 && brokerUid == 0) {
                                         rootStatus = "COMPLETE"
                                         rootLog = rootLog + "[OK] ═══ ROOT ACHIEVED — UID 0 ═══"
-                                        rootLog = rootLog + "[>>] Kernel Proof: SYSTEM_ACCESS confirmed"
+                                        rootLog = rootLog + "[>>] Broker context coherence verified"
                                         isRootedState = true
                                     } else {
                                         rootStatus = "BLOCKED"
-                                        rootLog = rootLog + "[!!] Kernel Proof FAILED — Stage $finalStage / UID $uid"
-                                        rootLog = rootLog + "[!!] Gated: Escalation did not reach SYSTEM_ACCESS"
-                                        rootLog = rootLog + "[>>] Context: $uidCheck"
+                                        rootLog = rootLog + "[!!] Kernel Proof FAILED — Stage $finalStage"
+                                        rootLog = rootLog + "[!!] Broker UID: $brokerUid (Expected 0)"
+                                        rootLog = rootLog + "[!!] Process Context: $uidCheck"
                                         isRootedState = false
                                     }
                                 }
@@ -456,6 +462,7 @@ fun DashboardScreen() {
                 ) {
                     Text(
                         text = when {
+                            !brokerConnected -> "⏳  BINDING SOVEREIGN GUARD..."
                             rootTriggered && rootProgress >= 1f && rootStatus == "COMPLETE" -> "✓  ROOT ACHIEVED"
                             rootTriggered && rootProgress < 1f -> "⟳  $rootStatus..."
                             rootTriggered -> "◉  EXPLOIT COMPLETED"
