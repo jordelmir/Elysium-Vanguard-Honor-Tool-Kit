@@ -1,0 +1,34 @@
+# Android Studio / Gradle
+*.iml
+.gradle/
+build/
+local.properties
+.idea/
+captures/
+
+# APK / Bundle outputs
+*.apk
+*.aab
+*.ap_
+
+# Generated files
+app/release/
+app/debug/
+
+# Native
+.cxx/
+.externalNativeBuild/
+obj/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Signing
+*.jks
+*.keystore
+key.properties
+
+# Sensitive
+google-services.json
+firebase-crashlytics-buildid.properties
