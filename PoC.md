@@ -37,5 +37,5 @@ A successful exploit will report:
 * **UID Elevation:** Transition from `uid=2000` (shell) to `uid=0` (root).
 
 ---
-*Elysium Vanguard R&D Section*
+*Elysium Vanguard Honor Tool Kit R&D Section*
  Marina del Rey, CA.

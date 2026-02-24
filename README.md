@@ -1,4 +1,4 @@
-# 🌌 Elysium Vanguard: TITAN v13.0
+# 🌌 Elysium Vanguard Honor Tool Kit: TITAN v13.0
 
 ### Hardware-Bridged Kernel Exploitation Toolkit
 
